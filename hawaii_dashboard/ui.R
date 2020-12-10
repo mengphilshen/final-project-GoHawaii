@@ -3,35 +3,35 @@ header <- dashboardHeader(title = "Go to Hawaii")
 
 ## 2. siderbar ------------------------------
 sidebar <- dashboardSidebar(
-                            width = 260,
-                            br(),
-                            sidebarMenu(
-                              ## 1st tab show the Main dashboard ------------
-                              menuItem(text = "Overview", 
-                                       tabName = "Overview",
-                                       icon = icon("compass")
-                                       ),
-                              
-                              ## 2nd tab show the Flight info ---------------
-                              menuItem(text = "Flight", 
-                                       tabName = "Flight",
-                                       icon = icon("fighter-jet")
-                              ),
-        
-                              ## 3rd tab shows Airbnb info ------------------
-                              menuItem(text = "Airbnb", 
-                                       tabName = "Airbnb",
-                                       icon = icon("house-user")
-                              ),
-                              
-                              ##4th tab shows Attraction info ---------------
-                              menuItem(text = "Attraction", 
-                                       tabName = "Attraction",
-                                       icon = icon("heart")
-                              )
-                              
-                            )
-                            
+  width = 260,
+  br(),
+  sidebarMenu(
+    ## 1st tab show the Main dashboard ------------
+    menuItem(text = "Overview", 
+             tabName = "Overview",
+             icon = icon("compass")
+    ),
+    
+    ## 2nd tab show the Flight info ---------------
+    menuItem(text = "Flight", 
+             tabName = "Flight",
+             icon = icon("fighter-jet")
+    ),
+    
+    ## 3rd tab shows Airbnb info ------------------
+    menuItem(text = "Airbnb", 
+             tabName = "Airbnb",
+             icon = icon("house-user")
+    ),
+    
+    ##4th tab shows Attraction info ---------------
+    menuItem(text = "Attraction", 
+             tabName = "Attraction",
+             icon = icon("heart")
+    )
+    
+  )
+  
 )
 
 
@@ -94,31 +94,35 @@ body <- dashboardBody(
       tabsetPanel(
         type = "tabs",
         tabPanel(
-          title = "Flight to Hawaii",
+          title = "Flights to Hawaii",
           fluidRow(
             column (5, 
-              selectInput(
-                "", #need to update to top 20
-                label = h3("From:"),
-                choices = mylist #need to update to top 20 city !!!!!!!!!!!!
-                )
+                    selectInput(
+                      "flight_from_select", #need to update to top 20
+                      label = h3("Please Select From City:"),
+                      choices = departure_airports_cities #need to update to top 20 city !!!!!!!!!!!!
+                    )
             ),
-            # column(5,
-            #   selectInput(
-            #     "county_filter",
-            #     label = h3("To:"),
-            #     choices = mylist
-            #     )
-            # )
           ),
           hr(),
           fluidRow(
-            gradientBox(
+            box(
+              status = "primary",
               title = "Non-stop Flights",
-              icon = "helicopter",
-              gradientColor = "green", 
-              boxToolSize = "s", 
-              footer = "", #need to update - return the result of flight query!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+              solidHeader = TRUE,
+              collapsible = TRUE,
+              dataTableOutput("dF_non_stop_flight_table"),
+              width = 12
+            )
+          ),
+          hr(),
+          fluidRow(
+            box(
+              status = "warning",
+              title = "One-stop Transfer Flights",
+              solidHeader = TRUE,
+              collapsible = TRUE,
+              dataTableOutput("dF_one_stop_flight_table"),
               width = 12
             )
           )
@@ -166,85 +170,85 @@ body <- dashboardBody(
                      label = h3("Bedroom"),
                      choices = mylist  #need to update!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
                    )
-          ),
+            ),
             column(4,
-                 selectInput(
-                   "county_filter",
-                   label = h3("Bathroom"),
-                   choices = mylist   #need to update!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                 )
-          )
-        ),
-        
-        fluidRow(
-          column(4,
-                 selectInput(
-                   "county_filter",
-                   label = h3("Type"),
-                   choices = mylist  #need to update!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                 )
+                   selectInput(
+                     "county_filter",
+                     label = h3("Bathroom"),
+                     choices = mylist   #need to update!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                   )
+            )
           ),
-          column(4,
-                 checkboxInput("superhose",label = "Superhost"))
-        ),
-        hr(),
-        fluidRow(
-          gradientBox(
-            title = "List of recommandation",
-            icon = "fa fa-heart",
-            gradientColor = "red",
-            boxToolSize = "s",
-            footer = "", #need to update - return the result of flight query!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-            width = 12
+          
+          fluidRow(
+            column(4,
+                   selectInput(
+                     "county_filter",
+                     label = h3("Type"),
+                     choices = mylist  #need to update!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                   )
+            ),
+            column(4,
+                   checkboxInput("superhose",label = "Superhost"))
+          ),
+          hr(),
+          fluidRow(
+            gradientBox(
+              title = "List of recommandation",
+              icon = "fa fa-heart",
+              gradientColor = "red",
+              boxToolSize = "s",
+              footer = "", #need to update - return the result of flight query!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+              width = 12
+            )
+          )
+        )
+      )
+    ),
+    ## 3.4 Attraction info ------------------------------------------------------
+    tabItem(
+      tabName = "Attraction",
+      tabsetPanel(
+        type = "tabs",
+        tabPanel(
+          title = "Place to see",
+          fluidRow(
+            # column(4,
+            #        selectInput(
+            #          "Neighborhood_select",
+            #          label = h3("Neighborhood"),
+            #          choices = venues_county  #need to update!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            #        )
+            # ),
+            column(4,
+                   selectInput(
+                     "Category_select",
+                     label = h3("Category"),
+                     choices = venues_categories   #need to update!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                   )
+            )
+          ),
+          hr(),
+          fluidRow(
+            box(
+              status = "primary",
+              title = "Attractions",
+              solidHeader = TRUE,
+              collapsible = TRUE,
+              dataTableOutput("dF_venue_table"),
+              width = 12
+            )
+
           )
         )
       )
     )
-  ),
-  ## 3.4 Attraction info ------------------------------------------------------
-  tabItem(
-    tabName = "Attraction",
-    tabsetPanel(
-      type = "tabs",
-      tabPanel(
-        title = "Place to see",
-        fluidRow(
-          column(4,
-                 selectInput(
-                   "county_filter",
-                   label = h3("Neighborhood"),
-                   choices = mylist  #need to update!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                 )
-          ),
-          column(4,
-                 selectInput(
-                   "county_filter",
-                   label = h3("Category"),
-                   choices = mylist   #need to update!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                 )
-          )
-        ),
-        hr(),
-        fluidRow(
-          gradientBox(
-            title = "List of Attraction",
-            icon = "camera-retro",
-            gradientColor = "yellow",
-            boxToolSize = "s",
-            footer = "", #need to update - return the result of flight query!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-            width = 12
-          )
-        )
-      )
-    )
-  )
   )
 )
 
 ## 4. put UI together ----------------------------------------------
 
 ui <- dashboardPage(
-  #includeCSS("styles.css"), ask JJ!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   header,
   sidebar,
   body

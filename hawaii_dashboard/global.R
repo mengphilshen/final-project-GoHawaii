@@ -44,9 +44,7 @@ covid$County = str_trim(covid$County)
 
 
 
-#by phil------------------------------------------------
-## Load Libraries
-
+# Phill
 
 # database library
 library(DBI)
@@ -72,7 +70,6 @@ Port = 3306
 Database = "Hawaii"
 
 
-
 # connect with AWS
 con <- DBI::dbConnect(odbc::odbc(), 
                       Driver = Driver, 
@@ -82,44 +79,66 @@ con <- DBI::dbConnect(odbc::odbc(),
                       Port = Port, 
                       Database = Database)
 
-## Run Queries
 
-# query: all routes to Hawaii
+## Run Queries to get fligts data---------------------------------------------
+
+# query: all non stop routes to Hawaii
 airport_list <- SQL("('HNL', 'ITO', 'OGG', 'KOA', 'MKK', 'LNY', 'LIH', 'HNM', 'JHM', 'MUE')")
 routes_SQL <- sqlInterpolate(con,
-                             "SELECT * FROM Routes WHERE DestinationAirport IN ?list",
+                             "WITH _airport as (
+                                SELECT Name, City, Country, IATA
+                                FROM Airports
+                            ),
+                                _routes as (
+                                SELECT SourceAirport, DestinationAirport
+                                FROM Routes
+                                WHERE DestinationAirport IN ?list
+                            )
+                            SELECT r.SourceAirport, s.Name as SourceAirportName, s.City as SourceCity, s.Country as SourceCountry, 
+                               r.DestinationAirport, d.Name as DestinationAirportName, d.City as DestinationCity, d.Country as DestinationCountry
+                               FROM _routes r
+                            JOIN _airport s on r.SourceAirport = s.IATA
+                            JOIN _airport d on r.DestinationAirport = d.IATA",
                              list = airport_list)
-routes_SQL_data <- dbGetQuery(con, routes_SQL)
+non_stop_routes_SQL_data <- dbGetQuery(con, routes_SQL)
+
+# Here is a list of Departure city to choose from
+dat <- routes_SQL_data[!(routes_SQL_data$SourceAirport %in% c('HNL', 'ITO', 'OGG', 'KOA', 'MKK', 'LNY', 'LIH', 'HNM', 'JHM', 'MUE')),]
+departure_airports_cities <- sort(unique(dat$SourceCity))
 
 
-
-# query: all airports of Hawaii
-arrival_airports_SQL <- sqlInterpolate(con,
-                                       "SELECT * FROM Airports WHERE IATA IN ?list",
-                                       list = airport_list)
-arrival_airports_SQL_data <- dbGetQuery(con, arrival_airports_SQL) 
-
-
-
-# query: all airports to Hawaii
-departure_airports_SQL <- sqlInterpolate(con,
-                                         "WITH r AS (SELECT * FROM Routes WHERE DestinationAirport IN ?list)
-                                          SELECT * FROM Airports WHERE IATA IN (SELECT DISTINCT SourceAirport FROM r)",
-                                         list = airport_list)
-departure_airports_SQL_data <- dbGetQuery(con, departure_airports_SQL) 
-
+# query: all 1 stop routes to Hawaii
+routes_one_SQL <- sqlInterpolate(con,
+                                 "WITH _airport as (
+                                      SELECT Name, City, Country, IATA
+                                      FROM Airports
+                                  ),
+                                      _routes as (
+                                      SELECT SourceAirport, DestinationAirport
+                                      FROM Routes
+                                  )
+                                  SELECT DISTINCT   air2.Name as SourceAirportName,
+                                                   air2.City as SourceCity, air2.Country as SourceCountry,
+                                                    air3.Name as TransferAirportName,
+                                                   air3.City as TransferCity, air3.Country as TransferCountry,
+                                                    air1.Name as DestinationAirportName,
+                                                   air1.City as DestinationCity, air1.Country as DestinationCountry
+                                  FROM _routes r1 JOIN _routes r2 ON r1.DestinationAirport = r2.SourceAirport
+                                                  JOIN _airport air1 ON r2.DestinationAirport = air1.IATA
+                                                  JOIN _airport air2 ON r1.SourceAirport = air2.IATA
+                                                  JOIN _airport air3 ON r1.DestinationAirport = air3.IATA
+                                  WHERE r1.SourceAirport != r1.DestinationAirport
+                                      AND r1.SourceAirport != r2.DestinationAirport
+                                      AND r1.DestinationAirport != r2.DestinationAirport
+                                      AND r2.DestinationAirport IN ?list ",
+                                 list = airport_list)
+one_stop_routes_SQL_data <- dbGetQuery(con, routes_one_SQL)
 
 
 # query: all venues of Hawaii
 venues_SQL <- sqlInterpolate(con, 
                              "SELECT * FROM Nearby_venues")
 venues_SQL_data <- dbGetQuery(con, venues_SQL)
-
-# query: AirBnB in Honolulu County
-County <- "Honolulu"
-AirBnB_Hawaii_SQL <- sqlInterpolate(con, 
-                                    "SELECT * FROM listingsAll"
-                                    )
-AirBnB_Hawaii_SQL_data <- dbGetQuery(con, AirBnB_Hawaii_SQL)
-
-
+venues_SQL_data2 <- venues_SQL_data[, c('name', 'categories', 'city', 'address', 'county')]
+venues_categories <- sort(unique( venues_SQL_data2$categories ))
+venues_county <- sort(unique( venues_SQL_data2$county ))

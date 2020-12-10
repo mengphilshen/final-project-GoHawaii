@@ -54,8 +54,19 @@ server <- function(input, output) {
   
   output$dF_covid_table <- DT::renderDataTable(
     filter(covid, County == input$county_filter)
-    
   )
   
+  # render value box for flight information ---------------------------------
+  output$dF_non_stop_flight_table <- DT::renderDataTable(
+    filter(non_stop_routes_SQL_data, SourceCity == input$flight_from_select)
+  )
   
+  output$dF_one_stop_flight_table <- DT::renderDataTable(
+    filter(one_stop_routes_SQL_data, SourceCity == input$flight_from_select)
+  )
+  
+  # render value box for venues information ----------------------------------
+  output$dF_venue_table <- DT::renderDataTable(
+    filter(venues_SQL_data2, categories == input$Category_select)
+  )
 }
