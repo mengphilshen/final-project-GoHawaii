@@ -103,6 +103,8 @@ body <- dashboardBody(
                       choices = departure_airports_cities #need to update to top 20 city !!!!!!!!!!!!
                     )
             ),
+            img(src = "flights1.jpg", height = 168, width = 299),
+            img(src = "flights2.jpg", height = 168, width = 245),
           ),
           hr(),
           fluidRow(
@@ -160,8 +162,11 @@ body <- dashboardBody(
                                 max = 30,
                                 value = 10,
                                 width = "220px")
-            )
+            ),
+            img(src = "airbnb1.jpg", height = 168, width = 250),
+            img(src = "airbnb2.jpg", height = 168, width = 250),
           ),
+  
           hr(),
           fluidRow(
             column(4,
@@ -226,7 +231,9 @@ body <- dashboardBody(
                      label = h3("Category"),
                      choices = venues_categories   #need to update!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
                    )
-            )
+            ),
+            img(src = "attraction1.jpg", height = 168, width = 299),
+            img(src = "attraction2.jpg", height = 168, width = 299),
           ),
           hr(),
           fluidRow(
@@ -238,7 +245,7 @@ body <- dashboardBody(
               dataTableOutput("dF_venue_table"),
               width = 12
             )
-
+            
           )
         )
       )
