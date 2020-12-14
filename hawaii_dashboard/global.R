@@ -131,6 +131,21 @@ routes_one_SQL <- sqlInterpolate(con,
                                  list = airport_list)
 one_stop_routes_SQL_data <- dbGetQuery(con, routes_one_SQL)
 
+# query: all AirBnB
+airBnB_SQL <- sqlInterpolate(con,
+                                 "select
+                                        neighbourhood_group_cleansed,
+                                        property_type,
+                                        bedrooms,
+                                        beds,
+                                        amenities,
+                                        price,
+                                        review_scores_rating,
+                                        reviews_per_month
+                                        from Hawaii.Listing l LEFT JOIN Hawaii.Score s ON l.id = s.id
+                                        order by s.review_scores_rating desc")
+airBnB_SQL_data <- dbGetQuery(con, airBnB_SQL)
+
 
 # query: all venues of Hawaii
 venues_SQL <- sqlInterpolate(con, 
