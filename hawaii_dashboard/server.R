@@ -3,7 +3,7 @@ server <- function(input, output) {
   pop <- reactive({
     filter(overview, County == input$county_filter)$Population
   })
-
+  
   area <- reactive({
     filter(overview, County == input$county_filter)$Area
   })
@@ -24,7 +24,7 @@ server <- function(input, output) {
       color = "aqua"
     )
   })
-
+  
   output$progressBox2 <- renderValueBox({
     valueBox(
       area(), 
@@ -68,5 +68,14 @@ server <- function(input, output) {
   # render value box for venues information ----------------------------------
   output$dF_venue_table <- DT::renderDataTable(
     filter(venues_SQL_data2, categories == input$Category_select)
+  )
+  
+  # render value box for airbnb information ---------------------------------
+  output$dF_airbnb_table <- DT::renderDataTable(
+    filter(airBnB_SQL_data, neighbourhood_group_cleansed == input$neighbourhood_select,
+           property_type == input$type_select,
+           bedrooms == input$bedroom_select, 
+           bathrooms_text ==input$bathroom_select,
+           price>=input$price_range[1],price<=input$price_range[2])
   )
 }
