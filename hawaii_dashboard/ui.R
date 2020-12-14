@@ -38,7 +38,7 @@ sidebar <- dashboardSidebar(
 ## 3. body ----------------------------------------------
 body <- dashboardBody(
   tabItems(
-    ## 3.1 Main dashboard -------------------------------
+    ## 3.1 Overview ------------------------------------
     tabItem(
       tabName = "Overview",
       tabsetPanel(
@@ -98,9 +98,9 @@ body <- dashboardBody(
           fluidRow(
             column (5, 
                     selectInput(
-                      "flight_from_select", #need to update to top 20
+                      "flight_from_select", 
                       label = h3("Please Select From City:"),
-                      choices = departure_airports_cities #need to update to top 20 city !!!!!!!!!!!!
+                      choices = departure_airports_cities 
                     )
             ),
             img(src = "flights1.jpg", height = 168, width = 299),
@@ -138,14 +138,7 @@ body <- dashboardBody(
         type = "tabs",
         tabPanel(
           title = "Place to Stay",
-          # fluidRow(
-          #   column(4,
-          #          selectInput(
-          #            "county_filter",
-          #            label = h3("County to Visit"),
-          #            choices = mylist  #need to update!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-          #          )
-          #   ),
+
           fluidRow(
             column (8,
                     sliderInput(inputId = "price_range",
@@ -155,55 +148,56 @@ body <- dashboardBody(
                                 value = c(100,500),
                                 width = "220px")
             ),
-            column (8,
-                    sliderInput(inputId = "night",
-                                label = "Nights",
-                                min = 1,
-                                max = 30,
-                                value = 10,
-                                width = "220px")
-            ),
+
             img(src = "airbnb1.jpg", height = 168, width = 250),
             img(src = "airbnb2.jpg", height = 168, width = 250),
           ),
-  
+          
           hr(),
           fluidRow(
             column(4,
                    selectInput(
-                     "county_filter",
-                     label = h3("Bedroom"),
-                     choices = mylist  #need to update!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                   )
-            ),
-            column(4,
-                   selectInput(
-                     "county_filter",
-                     label = h3("Bathroom"),
-                     choices = mylist   #need to update!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                     "neighbourhood_select",
+                     label = h3("Neighbourhood"),
+                     choices = airbnb_neighbourhood  
                    )
             )
+            
           ),
           
           fluidRow(
             column(4,
                    selectInput(
-                     "county_filter",
-                     label = h3("Type"),
-                     choices = mylist  #need to update!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                     "type_select",
+                     label = h3("Property Type"),
+                     choices = airbnb_type  
                    )
             ),
             column(4,
-                   checkboxInput("superhose",label = "Superhost"))
+                   selectInput(
+                     "bedroom_select",
+                     label = h3("Bedroom"),
+                     choices = bedroom_num  
+                   )
+            ),
+            column(4,
+                   selectInput(
+                     "bathroom_select",
+                     label = h3("Bathroom"),
+                     choices = bathroom_num   
+                   )
+            )
+            # column(4,
+            #        checkboxInput("superhost_check",label = "Superhost"))
           ),
           hr(),
           fluidRow(
-            gradientBox(
-              title = "List of recommandation",
-              icon = "fa fa-heart",
-              gradientColor = "red",
-              boxToolSize = "s",
-              footer = "", #need to update - return the result of flight query!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            box(
+              status = "primary",
+              title = "List of recommandations",
+              solid_header = TRUE,
+              collapsible = TRUE,
+              dataTableOutput("dF_airbnb_table"),
               width = 12
             )
           )
@@ -218,18 +212,11 @@ body <- dashboardBody(
         tabPanel(
           title = "Place to see",
           fluidRow(
-            # column(4,
-            #        selectInput(
-            #          "Neighborhood_select",
-            #          label = h3("Neighborhood"),
-            #          choices = venues_county  #need to update!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-            #        )
-            # ),
             column(4,
                    selectInput(
                      "Category_select",
                      label = h3("Category"),
-                     choices = venues_categories   #need to update!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                     choices = venues_categories  
                    )
             ),
             img(src = "attraction1.jpg", height = 168, width = 299),
