@@ -42,7 +42,7 @@ con <- DBI::dbConnect(odbc::odbc(),
 
 ## Run Query to get overall data
 overview_SQL <- sqlInterpolate(con, 
-                           "select * from county_overview_1")
+                               "select * from county_overview_1")
 overview <- dbGetQuery(con, overview_SQL)
 
 names(overview) <- c('County',
@@ -64,7 +64,7 @@ description <- overview[1, "Description"]
 
 ## Run Query to get overall covid data
 covid_SQL <- sqlInterpolate(con, 
-                        "select * from Covid
+                            "select * from Covid
                         order by date desc")
 covid <- dbGetQuery(con, covid_SQL)
 
@@ -131,11 +131,13 @@ routes_one_SQL <- sqlInterpolate(con,
                                  list = airport_list)
 one_stop_routes_SQL_data <- dbGetQuery(con, routes_one_SQL)
 
+
 # query: all AirBnB
 airBnB_SQL <- sqlInterpolate(con,
-                                 "select
+                             "select
                                         neighbourhood_group_cleansed,
                                         property_type,
+                                        bathrooms_text,
                                         bedrooms,
                                         beds,
                                         amenities,
@@ -145,6 +147,11 @@ airBnB_SQL <- sqlInterpolate(con,
                                         from Hawaii.Listing l LEFT JOIN Hawaii.Score s ON l.id = s.id
                                         order by s.review_scores_rating desc")
 airBnB_SQL_data <- dbGetQuery(con, airBnB_SQL)
+airbnb_neighbourhood <- sort(unique( airBnB_SQL_data$neighbourhood_group_cleansed ))
+airbnb_type<- sort(unique( airBnB_SQL_data$property_type ))
+bedroom_num <- sort(unique( airBnB_SQL_data$bedrooms ))
+bathroom_num <- sort(unique( airBnB_SQL_data$bathrooms_text ))
+
 
 
 # query: all venues of Hawaii
