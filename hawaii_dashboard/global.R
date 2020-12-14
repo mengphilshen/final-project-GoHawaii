@@ -1,3 +1,4 @@
+# R library
 library(dplyr)
 library(shiny)
 library(shinydashboard)
@@ -9,43 +10,6 @@ library(tidyr)
 library(DT)
 library(shinydashboardPlus)
 
-# Preprocessing overview
-overview <- read.csv("data/county_overview.csv")
-# overview 
-#select * from ...
-# where county = "Hawaii"
-
-names(overview) <- c('County',
-                     'Population',
-                     'Area',
-                     'Density',
-                     'Flower',
-                     'Color',
-                     'Largest_Settlement',
-                     'Description',
-                     'Web')
-
-overview$County = str_trim(overview$County)
-mylist <- as.list(overview["County"])
-
-description <- overview[1, "Description"]
-
-covid <- read.csv("data/covid_by_county_in_hawaii.csv")
-names(covid) <- c('Date',
-                     'County',
-                     'State',
-                     'Federal_ID',
-                     'Cumulative_Cases',
-                     'Cumulative_Death')
-covid$County = str_trim(covid$County)
-
-
-
-
-
-
-# Phill
-
 # database library
 library(DBI)
 library(odbc)
@@ -53,14 +17,11 @@ library(odbc)
 library(tidyverse)
 
 
-## Connect Database
-
-
 # check drivers
 sort(unique(odbcListDrivers()[[1]]))
 
 
-
+## Connect Database
 # configure parameters
 Driver = "MySQL ODBC 8.0 Unicode Driver"
 Server = "gohawaii.cxvagtspriyp.us-east-1.rds.amazonaws.com"
@@ -78,6 +39,42 @@ con <- DBI::dbConnect(odbc::odbc(),
                       PWD = PWD, 
                       Port = Port, 
                       Database = Database)
+
+## Run Query to get overall data
+overview_SQL <- sqlInterpolate(con, 
+                           "select * from county_overview_1")
+overview <- dbGetQuery(con, overview_SQL)
+
+names(overview) <- c('County',
+                     'Population',
+                     'Area',
+                     'Density',
+                     'Flower',
+                     'Color',
+                     'Largest_Settlement',
+                     'Description',
+                     'Web')
+overview$County = str_trim(overview$County)
+
+## get all the counties
+mylist <- as.list(overview["County"])
+
+## 
+description <- overview[1, "Description"]
+
+## Run Query to get overall covid data
+covid_SQL <- sqlInterpolate(con, 
+                        "select * from Covid
+                        order by date desc")
+covid <- dbGetQuery(con, covid_SQL)
+
+names(covid) <- c('indx','Date',
+                  'County',
+                  'State',
+                  'Federal_ID',
+                  'Cumulative_Cases',
+                  'Cumulative_Death')
+covid$County = str_trim(covid$County)
 
 
 ## Run Queries to get fligts data---------------------------------------------
@@ -103,7 +100,7 @@ routes_SQL <- sqlInterpolate(con,
 non_stop_routes_SQL_data <- dbGetQuery(con, routes_SQL)
 
 # Here is a list of Departure city to choose from
-dat <- routes_SQL_data[!(routes_SQL_data$SourceAirport %in% c('HNL', 'ITO', 'OGG', 'KOA', 'MKK', 'LNY', 'LIH', 'HNM', 'JHM', 'MUE')),]
+dat <- non_stop_routes_SQL_data[!(non_stop_routes_SQL_data$SourceAirport %in% c('HNL', 'ITO', 'OGG', 'KOA', 'MKK', 'LNY', 'LIH', 'HNM', 'JHM', 'MUE')),]
 departure_airports_cities <- sort(unique(dat$SourceCity))
 
 
