@@ -88,7 +88,7 @@ routes_SQL <- sqlInterpolate(con,
                             ),
                                 _routes as (
                                 SELECT SourceAirport, DestinationAirport
-                                FROM Routes
+                                FROM RoutesNew
                                 WHERE DestinationAirport IN ?list
                             )
                             SELECT r.SourceAirport, s.Name as SourceAirportName, s.City as SourceCity, s.Country as SourceCountry, 
@@ -112,7 +112,7 @@ routes_one_SQL <- sqlInterpolate(con,
                                   ),
                                       _routes as (
                                       SELECT SourceAirport, DestinationAirport
-                                      FROM Routes
+                                      FROM RoutesNew
                                   )
                                   SELECT DISTINCT   air2.Name as SourceAirportName,
                                                    air2.City as SourceCity, air2.Country as SourceCountry,
@@ -136,21 +136,19 @@ one_stop_routes_SQL_data <- dbGetQuery(con, routes_one_SQL)
 airBnB_SQL <- sqlInterpolate(con,
                              "select
                                         neighbourhood_group_cleansed,
-                                        property_type,
-                                        bathrooms_text,
+                                        room_type,
+                                        bathrooms,
                                         bedrooms,
-                                        beds,
                                         amenities,
                                         price,
                                         review_scores_rating,
                                         reviews_per_month
-                                        from Hawaii.Listing l LEFT JOIN Hawaii.Score s ON l.id = s.id
-                                        order by s.review_scores_rating desc")
+                                        from Hawaii.listingsAll
+                                        order by review_scores_rating desc")
 airBnB_SQL_data <- dbGetQuery(con, airBnB_SQL)
 airbnb_neighbourhood <- sort(unique( airBnB_SQL_data$neighbourhood_group_cleansed ))
-airbnb_type<- sort(unique( airBnB_SQL_data$property_type ))
 bedroom_num <- sort(unique( airBnB_SQL_data$bedrooms ))
-bathroom_num <- sort(unique( airBnB_SQL_data$bathrooms_text ))
+bathroom_num <- sort(unique( airBnB_SQL_data$bathrooms ))
 
 
 
