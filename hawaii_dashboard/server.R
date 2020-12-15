@@ -73,9 +73,8 @@ server <- function(input, output) {
   # render value box for airbnb information ---------------------------------
   output$dF_airbnb_table <- DT::renderDataTable(
     filter(airBnB_SQL_data, neighbourhood_group_cleansed == input$neighbourhood_select,
-           property_type == input$type_select,
            bedrooms == input$bedroom_select, 
-           bathrooms_text ==input$bathroom_select,
+           bathrooms ==input$bathroom_select,
            price>=input$price_range[1],price<=input$price_range[2])
-  )
+  )  
 }
