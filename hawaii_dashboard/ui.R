@@ -153,7 +153,6 @@ body <- dashboardBody(
             img(src = "airbnb2.jpg", height = 168, width = 250),
           ),
           
-          hr(),
           fluidRow(
             column(4,
                    selectInput(
@@ -166,13 +165,6 @@ body <- dashboardBody(
           ),
           
           fluidRow(
-            column(4,
-                   selectInput(
-                     "type_select",
-                     label = h3("Property Type"),
-                     choices = airbnb_type  
-                   )
-            ),
             column(4,
                    selectInput(
                      "bedroom_select",
