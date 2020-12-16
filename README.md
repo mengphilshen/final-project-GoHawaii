@@ -7,17 +7,19 @@ As more and more companies allow employees to work remotely due to Covid, Hawaii
 
 ## Features ##
 
-- 1.	Once users select an island they want to visit, the webapp will provide detailed COVID information of that island in the recent past, such as cumulative cases and cumulative death data.
+- Once users select an island they want to visit, the webapp will provide detailed COVID information of that island in the recent past, such as cumulative cases and cumulative death data.
 
-- 2.	Users can enter their current city, the flight tracker will inform users what flight they can take to get to Hawaii.
+- Users can enter their current city, the flight tracker will inform users what flight they can take to get to Hawaii.
 
-- 3.	Users can enter their living preferences, for example, how many bedrooms they want, how much they are willing to afford. The webapp can help users’ pair AirBnB hotels.
+- Users can enter their living preferences, for example, how many bedrooms they want, how much they are willing to afford. The webapp can help users’ pair AirBnB hotels.
 
-- 4.	The webapp can inform users about nearby attractions, shops, and restaurants with detailed addresses.
+- The webapp can inform users about nearby attractions, shops, and restaurants with detailed addresses.
 
 ## Web App ##
 
 https://philshen.shinyapps.io/Hawaii/
+
+## Contributors ##
 
 - Chi Zhang / Email: chizh@seas.upenn.edu
 - Junjie Qian / Email: jjqians@seas.upenn.edu
