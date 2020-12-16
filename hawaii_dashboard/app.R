@@ -1,4 +1,4 @@
-#
+# Aloha Hawaii App
 # 
 # 
 #
@@ -12,6 +12,7 @@ library(tidyverse)
 library(DBI)
 library(odbc)
 library(DT)
+library(plotly)
 library(leaflet)
 library(shiny)
 library(shinydashboard)
@@ -43,7 +44,15 @@ overview <- dbGetQuery(con, overview_SQL)
 county_list <- sort(unique(overview$County))
 
 # query: Covid
+covid1_SQL <- sqlInterpolate(con, 
+                             "SELECT * FROM Covid")
+covid1 <- dbGetQuery(con, covid1_SQL)
+covid1$date <- as.Date(covid1$date, "%m/%d/%y")
 
+covid2_SQL <- sqlInterpolate(con, 
+                             "SELECT * FROM Covid2")
+covid2 <- dbGetQuery(con, covid2_SQL)
+covid2$Date <- as.Date(covid2$Date, "%m/%d/%y")
 
 # query: Flights
 arrival_airport <- c('HNL', 'ITO', 'OGG', 'KOA', 'MKK', 'LNY', 'LIH', 'HNM', 'JHM', 'MUE')
@@ -218,10 +227,17 @@ body <- dashboardBody(
                     fluidRow(
                         box(
                             status = "primary",
-                            title = "Covid Info",
+                            title = "Covid Info: Cumulative number of cases over time",
                             solid_header = TRUE,
-                            dataTableOutput("dF_covid_table"),
-                            width = 12
+                            plotlyOutput("cumulative_cases_plot"),
+                            width = 6
+                        ),
+                        box(
+                            status = "info",
+                            title = "Covid Info: New number of cases over time",
+                            solid_header = TRUE,
+                            plotlyOutput("new_cases_plot"),
+                            width = 6
                         )
                     )
                 )
@@ -435,6 +451,43 @@ server <- function(input, output) {
     
     output$description <- renderText({
         filter(overview, County == input$county_filter)$Description
+    })
+    
+    # render plot for Covid info
+    output$cumulative_cases_plot <- renderPlotly({
+        cumulative_cases0 <- covid1 %>% 
+            filter(county != "Unknown") %>%
+            ggplot(aes(x = date,
+                       y = cumulative_cases,
+                       color = county,
+                       group = 1)) +
+            geom_line() +
+            labs(color = "county") +
+            facet_wrap(~county, ncol = 2) +
+            theme_minimal() +
+            theme(axis.title.x=element_blank(), 
+                  axis.title.y=element_blank(),
+                  legend.position = "none")
+        cumulative_cases1 <- ggplotly(cumulative_cases0)
+        cumulative_cases1
+    })
+    
+    output$new_cases_plot <- renderPlotly({
+        new_cases0 <- covid2 %>% 
+            filter(County != "Missing") %>%
+            ggplot(aes(x = Date,
+                       y = New_Cases,
+                       color = County,
+                       group = 1)) +
+            geom_line() +
+            labs(color = "County") +
+            facet_wrap(~County, ncol = 2) +
+            theme_minimal() +
+            theme(axis.title.x=element_blank(), 
+                  axis.title.y=element_blank(),
+                  legend.position = "none")
+        new_cases1 <- ggplotly(new_cases0)
+        new_cases1
     })
     
     # render table for Flight info
